@@ -23,7 +23,7 @@ class RoomController extends Controller
     {
         $room = Room::with('category')->find($id);
 
-        if ($room) {
+        if (!$room) {
             return response()->json([
                 'success' => false,
                 'message' => 'Room not found'
