@@ -5,9 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\Booking;
 use App\Models\Room;
 use Carbon\Carbon;
+use Midtrans\Config;
+use Midtrans\Snap;
+use Xendit\Configuration;
+use Xendit\Invoice\InvoiceApi;
+
+
 
 class BookingController extends Controller
 {
@@ -57,10 +64,93 @@ class BookingController extends Controller
             'status' => 'pending'
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Booking Berhasil',
-            'data' => $booking
-        ]);
+        try {
+            Configuration::setXenditKey(config('xendit.api_key'));
+            $apiInstance = new InvoiceApi();
+
+            $externalId = 'BOOK-' . time();
+
+            $params = [
+                'external_id' => $externalId,
+                'amount' => (int) $totalPrice,
+                'payer_email' => Auth::user()->email ?? 'guest@gmail.com',
+                'description' => 'Booking Aprtement',
+
+
+
+            ];
+
+            // CREATE INVOICE
+
+            $invoice = $apiInstance->createInvoice($params);
+
+            //update booking
+
+            $booking->update([
+                'order_id' => $externalId,
+                'payment_url' => $invoice['invoice_url']
+            ]);
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Booking berhasil lanjut pembayaran',
+                'data' => $booking,
+                'payment_url' => $invoice['invoice_url']
+            ]);
+        } catch (\Exception $e) {
+
+            // 🔥 LOG ERROR BIAR KELIHATAN
+            Log::error('XENDIT ERROR: ' . $e->getMessage());
+
+            // tetap return booking walaupun payment gagal
+            return response()->json([
+                'success' => false,
+                'message' => 'Booking berhasil tapi payment error',
+                'booking' => $booking,
+                'error_midtrans' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function handleCallBack(Request $request)
+    {
+        $serverKey = config('midtarns.server.key');
+
+        $hashed = hash(
+            "sha512",
+            $request->order_id .
+                $request->status_code .
+                $request->gross_amount .
+                $serverKey
+        );
+
+        if ($hashed != $request->signature_key) {
+            return response()->json(['message' => 'Invalid Signature'], 403);
+        }
+
+        $booking = Booking::where('order_id', $request->order_id)->first();
+
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found']);
+        }
+
+        if ($request->transaction_status == 'settlement') {
+            $booking->update([
+                'status' => 'approved',
+                'payment_status' => 'paid'
+            ]);
+        } elseif ($request->transaction_status == 'pending') {
+            $booking->update([
+                'parment_status' => 'pending'
+            ]);
+        } elseif ($request->transaction_status == 'expire') {
+            $booking->update([
+                'status' => 'cancelled',
+                'payment_status' => 'expired'
+            ]);
+        }
+
+        return response()->json(['message' => 'Ok']);
     }
 }

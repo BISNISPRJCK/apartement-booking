@@ -26,7 +26,7 @@ class RoomForm
                     'booked' => 'Booked',
                 ])->required(),
 
-                FileUpload::make('image')->label('Room Image')->image()->directory('rooms')->imagePreviewHeight(200)->required(),
+                FileUpload::make('image')->label('Room Image')->image()->disk('public')->directory('rooms')->imagePreviewHeight(200)->required(),
 
                 TextArea::make('description')->label('Description')->columnSpanFull()
             ]);

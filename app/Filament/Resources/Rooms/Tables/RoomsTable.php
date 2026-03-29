@@ -18,7 +18,7 @@ class RoomsTable
                 Tables\Columns\TextColumn::make('room_number')
                     ->label('Room Number')
                     ->searchable(),
-                ImageColumn::make('image')->label('Room Image'),
+                ImageColumn::make('image')->label('Room Image')->disk('public'),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label('Category'),
 
