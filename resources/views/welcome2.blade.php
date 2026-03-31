@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'VANTIX STAY | Sewa Apartemen Ultra Premium')</title>
+    <title>THE RESIDENCE | Sewa Apartemen Ultra Premium</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,8 +17,6 @@
     
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
-    @stack('styles')
     
     <style>
         * {
@@ -78,6 +76,31 @@
             color: var(--text-primary);
         }
 
+        /* Custom Cursor */
+        .cursor {
+            width: 10px;
+            height: 10px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.2s;
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .cursor-follower {
+            width: 35px;
+            height: 35px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.1s;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 4px;
@@ -111,6 +134,40 @@
             }
         }
 
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(253, 185, 49, 0.3);
+            border: none;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(253, 185, 49, 0.5);
+        }
+
+        .theme-toggle i {
+            font-size: 24px;
+            color: #0A0A0A;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(180deg);
+        }
+
         /* Navigation */
         .navbar {
             position: fixed;
@@ -137,6 +194,7 @@
             align-items: center;
         }
 
+        /* Logo Container with Image */
         .logo {
             position: relative;
             overflow: hidden;
@@ -176,7 +234,6 @@
             display: flex;
             gap: 50px;
             list-style: none;
-            align-items: center;
         }
 
         .nav-links a {
@@ -211,114 +268,7 @@
             text-shadow: 0 0 8px var(--gold-glow);
         }
 
-        /* Theme Toggle Button in Navbar */
-        .theme-toggle-nav {
-            background: transparent;
-            border: 1px solid var(--gold-primary);
-            border-radius: 50px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--gold-primary);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .theme-toggle-nav:hover {
-            background: var(--gold-gradient);
-            color: #0A0A0A;
-            transform: translateY(-2px);
-            box-shadow: 0 0 20px rgba(253, 185, 49, 0.3);
-        }
-
-        .theme-toggle-nav i {
-            font-size: 16px;
-        }
-
-        /* Booking Now Button */
-        .booking-now-btn {
-            background: var(--gold-gradient);
-            border: none;
-            border-radius: 50px;
-            padding: 20px 26px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #0A0A0A;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-decoration: none;
-        }
-
-        .booking-now-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 25px rgba(253, 185, 49, 0.4);
-            animation: shimmerGold 1s linear infinite;
-        }
-
-        .booking-now-btn i {
-            font-size: 14px;
-        }
-
-
-        .booking-floating {
-            position: fixed;
-            right: 30px;
-            bottom: 30px;
-            background: var(--gold-gradient);
-            color: #0A0A0A;
-            padding: 14px 25px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 13px;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            z-index: 9999;
-            box-shadow: 0 0 20px rgba(253,185,49,0.4);
-            transition: all 0.3s ease;
-        }
-
-        .booking-floating:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(253,185,49,0.6);
-        }
-
-        .booking-floating i {
-            font-size: 14px;
-        }
-
-        @media (max-width: 768px) {
-            .booking-floating {
-                right: 20px;
-                bottom: 100px;
-                padding: 20px 28px;
-                font-size: 12px;
-            }
-
-            .booking-floating span {
-                display: none;
-            }
-        }
-        /* Mobile Menu Button */
-        .mobile-menu-btn {
-            display: none;
-            font-size: 28px;
-            color: var(--gold-primary);
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        /* Hero Section */
+        /* Hero Section with Parallax */
         .hero {
             height: 100vh;
             position: relative;
@@ -336,7 +286,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('{{ asset('images/hero-bg.jpg') }}');
+            background-image: url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1920');
             background-size: cover;
             background-position: center;
             opacity: 0.3;
@@ -433,8 +383,6 @@
             z-index: 1;
             border-radius: 50px;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-            border: none;
-            cursor: pointer;
         }
 
         .btn-gold::before {
@@ -487,47 +435,36 @@
 
         .scroll-indicator {
             position: absolute;
-            bottom: 50px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 2;
         }
 
-        .arrow-down {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
+        .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--gold-primary);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 0 15px var(--gold-glow);
         }
 
-        .arrow-down span {
-            width: 20px;
-            height: 20px;
-            border-bottom: 2px solid #c9a86a;
-            border-right: 2px solid #c9a86a;
-            transform: rotate(45deg);
-            animation: arrowMove 1.5s infinite;
+        .mouse::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 10px;
+            background: var(--gold-gradient);
+            animation: scroll 2s infinite;
         }
 
-        .arrow-down span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .arrow-down span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes arrowMove {
-            0% {
-                opacity: 0;
-                transform: rotate(45deg) translate(-10px, -10px);
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 0;
-                transform: rotate(45deg) translate(10px, 10px);
-            }
+        @keyframes scroll {
+            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(20px); opacity: 0; }
         }
 
         /* Section Styles */
@@ -870,8 +807,6 @@
             transition: all 0.4s;
             border-radius: 50px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            border: none;
-            cursor: pointer;
         }
 
         .btn-dark:hover {
@@ -993,10 +928,6 @@
                 display: none;
             }
             
-            .mobile-menu-btn {
-                display: block;
-            }
-            
             .hero h1 {
                 font-size: 42px;
             }
@@ -1044,99 +975,192 @@
                 font-size: 36px;
             }
             
+            .theme-toggle {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+            
+            .theme-toggle i {
+                font-size: 20px;
+            }
+            
             .logo-img {
                 height: 30px;
             }
             
             .logo h1 {
-                font-size: 20px;
+                font-size: 24px;
                 letter-spacing: 2px;
             }
             
             .logo {
-                gap: 8px;
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body class="dark-mode">
 
+<!-- Custom Cursor -->
+<div class="cursor"></div>
+<div class="cursor-follower"></div>
+
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" id="themeToggle">
+    <i class="fas fa-moon"></i>
+</button>
+
 <!-- Navigation -->
 <nav class="navbar" id="navbar">
     <div class="nav-container">
         <div class="logo" data-aos="fade-right">
-            @if(Storage::exists('public/logo.png'))
-                <img src="{{ asset('storage/logo.png') }}" alt="Logo" class="logo-img">
-            @else
-                <img src="https://placehold.co/50x50/FDB931/0A0A0A?text=VS" alt="Logo" class="logo-img">
-            @endif
-            <h1>VANTIX STAY</h1>
+            <img src="{{ asset('assets/logo_vs.png') }}" alt="Logo" class="logo-img">
+            <h1>THE RESIDENCE</h1>
         </div>
-        <button class="mobile-menu-btn" id="mobileMenuBtn">
-            <i class="fas fa-bars"></i>
-        </button>
-        <ul class="nav-links" id="navLinks">
-            <li>
-                <a href="{{ route('home') }}" 
-                class="{{ request()->routeIs('home') ? 'active' : '' }}">
-                    HOME
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('property') }}" 
-                class="{{ request()->routeIs('property*') ? 'active' : '' }}">
-                    PROPERTIES
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('about') }}" 
-                class="{{ request()->routeIs('about') ? 'active' : '' }}">
-                    ABOUT
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('testimonials') }}" 
-                class="{{ request()->routeIs('testimonials') ? 'active' : '' }}">
-                    TESTIMONIALS
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('contact') }}" 
-                class="{{ request()->routeIs('contact') ? 'active' : '' }}">
-                    CONTACT
-                </a>
-            </li>
-
-            <li>
-                <button class="theme-toggle-nav" id="themeToggleNav">
-                    <i class="fas fa-moon" id="themeIconNav"></i>
-                    <span id="themeTextNav">DARK</span>
-                </button>
-            </li>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">HOME</a></li>
+            <li><a href="#apartments">RESIDENCES</a></li>
+            <li><a href="#facilities">AMENITIES</a></li>
+            <li><a href="#testimonials">TESTIMONIALS</a></li>
+            <li><a href="#contact">CONTACT</a></li>
         </ul>
     </div>
 </nav>
 
-<main>
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content" data-aos="fade-up" data-aos-duration="1500">
+        <div class="hero-subtitle">SINCE 2024</div>
+        <h1>Where <span>Luxury</span><br>Meets Elegance</h1>
+        <p>Experience the pinnacle of sophisticated living in the heart of the city.<br>Curated for those who appreciate the finest things in life.</p>
+        <a href="#apartments" class="btn-gold">DISCOVER MORE</a>
+        <a href="#contact" class="btn-outline-gold">INQUIRE NOW</a>
+    </div>
+    <div class="scroll-indicator">
+        <div class="mouse"></div>
+    </div>
+</section>
 
-    @yield('content')
-</main>
+<!-- Apartments Section -->
+<section id="apartments">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Exclusive Residences</h2>
+        <p class="section-subtitle" data-aos="fade-up">Crafted for the discerning few</p>
+        
+        <div class="apartments-grid">
+            @php
+                $apartments = [
+                    ['name' => 'The Grand Suite', 'price' => 'Rp 1.8M', 'bed' => 3, 'bath' => 3, 'size' => '185m²', 'img' => 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800'],
+                    ['name' => 'The Royal Penthouse', 'price' => 'Rp 3.2M', 'bed' => 4, 'bath' => 5, 'size' => '320m²', 'img' => 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=800'],
+                    ['name' => 'The Presidential', 'price' => 'Rp 5.5M', 'bed' => 5, 'bath' => 6, 'size' => '450m²', 'img' => 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800']
+                ];
+            @endphp
+            
+            @foreach($apartments as $index => $apt)
+            <div class="apartment-card" data-aos="fade-up" data-aos-delay="{{ $index * 150 }}">
+                <div class="card-image">
+                    <img src="{{ $apt['img'] }}" alt="{{ $apt['name'] }}">
+                    <div class="card-badge">EXCLUSIVE</div>
+                </div>
+                <div class="card-content">
+                    <h3>{{ $apt['name'] }}</h3>
+                    <div class="price">{{ $apt['price'] }} <span>/ annum</span></div>
+                    <div class="features">
+                        <span><i class="fas fa-bed"></i> {{ $apt['bed'] }} Bedrooms</span>
+                        <span><i class="fas fa-bath"></i> {{ $apt['bath'] }} Bathrooms</span>
+                        <span><i class="fas fa-expand"></i> {{ $apt['size'] }}</span>
+                    </div>
+                    <a href="#" class="btn-gold" style="width: 100%; text-align: center;">VIEW DETAILS</a>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
-<a href="{{ route('contact') }}" class="booking-floating">
-    <i class="fas fa-calendar-check"></i>
-    <span>BOOKING NOW</span>
-</a>
+<!-- Facilities Section -->
+<section id="facilities">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">World-Class Amenities</h2>
+        <p class="section-subtitle" data-aos="fade-up">Designed for the extraordinary lifestyle</p>
+        
+        <div class="facilities-grid">
+            @php
+                $facilities = [
+                    ['icon' => 'fas fa-water', 'name' => 'Infinity Edge Pool', 'desc' => '75ft sky pool with panoramic city views'],
+                    ['icon' => 'fas fa-dumbbell', 'name' => 'Private Fitness Center', 'desc' => 'State-of-the-art equipment with personal trainers'],
+                    ['icon' => 'fas fa-spa', 'name' => 'Luxury Spa & Wellness', 'desc' => 'Full-service spa with treatment rooms'],
+                    ['icon' => 'fas fa-champagne-glasses', 'name' => 'Private Lounge', 'desc' => 'Members-only club with curated experiences'],
+                    ['icon' => 'fas fa-concierge-bell', 'name' => '24K Concierge', 'desc' => 'White-glove service for every need'],
+                    ['icon' => 'fas fa-car', 'name' => 'Valet Parking', 'desc' => 'Chauffeur-driven luxury fleet']
+                ];
+            @endphp
+            
+            @foreach($facilities as $index => $facility)
+            <div class="facility-item" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
+                <i class="{{ $facility['icon'] }}"></i>
+                <h3>{{ $facility['name'] }}</h3>
+                <p>{{ $facility['desc'] }}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</section>
 
+<!-- Testimonials Section -->
+<section id="testimonials" class="testimonials-section">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">Resident Testimonials</h2>
+        <p class="section-subtitle" data-aos="fade-up">What our distinguished residents say</p>
+        
+        <div class="swiper testimonials-slider" data-aos="fade-up">
+            <div class="swiper-wrapper">
+                @php
+                    $testimonials = [
+                        ['name' => 'Alexander Chen', 'position' => 'CEO, LuxCorp', 'text' => 'The epitome of luxury living. Every detail is meticulously crafted, and the service is unparalleled. This is not just a residence; it\'s a lifestyle.'],
+                        ['name' => 'Isabella Rossi', 'position' => 'Fashion Designer', 'text' => 'I\'ve lived in luxury properties worldwide, but The Residence sets a new standard. The attention to detail and privacy is exceptional.'],
+                        ['name' => 'William Hartono', 'position' => 'Investor', 'text' => 'The perfect blend of sophistication and comfort. The amenities are world-class, and the location is unbeatable. Truly a masterpiece.'],
+                        ['name' => 'Natasha Kowalski', 'position' => 'Art Curator', 'text' => 'Living here feels like being in a five-star resort every day. The architecture, the service, the community - everything is perfection.']
+                    ];
+                @endphp
+                
+                @foreach($testimonials as $testimonial)
+                <div class="swiper-slide">
+                    <div class="testimonial-card">
+                        <div class="quote-icon">
+                            <i class="fas fa-quote-right"></i>
+                        </div>
+                        <p class="testimonial-text">"{{ $testimonial['text'] }}"</p>
+                        <div class="client-info">
+                            <h4>{{ $testimonial['name'] }}</h4>
+                            <p>{{ $testimonial['position'] }}</p>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<div class="cta-section">
+    <div class="cta-content" data-aos="zoom-in">
+        <h2>Experience The Extraordinary</h2>
+        <p>Schedule a private tour of our exclusive residences</p>
+        <a href="#contact" class="btn-dark">INQUIRE NOW</a>
+    </div>
+</div>
 
 <!-- Footer -->
 <footer id="contact">
     <div class="footer-content">
         <div class="footer-section" data-aos="fade-up">
-            <h3>VANTIX STAY</h3>
+            <h3>THE RESIDENCE</h3>
             <p>Redefining luxury living in the heart of Jakarta's most prestigious district. Where elegance meets exclusivity.</p>
             <div class="social-links">
                 <a href="#"><i class="fab fa-instagram"></i></a>
@@ -1150,7 +1174,7 @@
             <h3>CONTACT</h3>
             <p><i class="fas fa-map-marker-alt" style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px;"></i> Jalan Jenderal Sudirman Kav. 52-53, Jakarta 12190</p>
             <p style="margin-top: 15px;"><i class="fas fa-phone" style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px;"></i> +62 21 5080 8888</p>
-            <p style="margin-top: 15px;"><i class="fas fa-envelope" style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px;"></i> concierge@vantixstay.com</p>
+            <p style="margin-top: 15px;"><i class="fas fa-envelope" style="background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-right: 10px;"></i> concierge@theresidence.com</p>
         </div>
         
         <div class="footer-section" data-aos="fade-up" data-aos-delay="100">
@@ -1163,16 +1187,13 @@
     </div>
     
     <div class="footer-bottom">
-        <p>&copy; {{ date('Y') }} VANTIX STAY. All Rights Reserved. An Icon of Luxury Living.</p>
+        <p>&copy; 2024 THE RESIDENCE. All Rights Reserved. An Icon of Luxury Living.</p>
     </div>
 </footer>
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-
-@stack('scripts')
-
 <script>
     // Initialize AOS
     AOS.init({
@@ -1181,37 +1202,37 @@
         offset: 100
     });
     
-    // Theme Toggle Functionality (Navbar Version)
-    const themeToggleNav = document.getElementById('themeToggleNav');
+    // Theme Toggle Functionality
+    const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-    const themeIconNav = document.getElementById('themeIconNav');
-    const themeTextNav = document.getElementById('themeTextNav');
+    const themeIcon = themeToggle.querySelector('i');
     
+    // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
         body.classList.remove('dark-mode');
         body.classList.add('light-mode');
-        themeIconNav.classList.remove('fa-moon');
-        themeIconNav.classList.add('fa-sun');
-        themeTextNav.textContent = 'LIGHT';
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
     }
     
-    themeToggleNav.addEventListener('click', () => {
+    // Theme toggle click handler
+    themeToggle.addEventListener('click', () => {
         if (body.classList.contains('dark-mode')) {
             body.classList.remove('dark-mode');
             body.classList.add('light-mode');
-            themeIconNav.classList.remove('fa-moon');
-            themeIconNav.classList.add('fa-sun');
-            themeTextNav.textContent = 'LIGHT';
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
             localStorage.setItem('theme', 'light');
         } else {
             body.classList.remove('light-mode');
             body.classList.add('dark-mode');
-            themeIconNav.classList.remove('fa-sun');
-            themeIconNav.classList.add('fa-moon');
-            themeTextNav.textContent = 'DARK';
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
             localStorage.setItem('theme', 'dark');
         }
+        
+        // Refresh AOS and Swiper to adapt to new theme
         AOS.refresh();
     });
     
@@ -1248,26 +1269,23 @@
         }
     });
     
-    // Smooth scroll for anchor links
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            const href = this.getAttribute('href');
-            if (href !== '#' && href !== '' && href.startsWith('#')) {
-                e.preventDefault();
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
     });
     
-    // Active link highlighting for scroll
+    // Active link highlighting
     const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.nav-links a:not(.booking-now-btn)');
+    const navLinks = document.querySelectorAll('.nav-links a');
     
     window.addEventListener('scroll', () => {
         let current = '';
@@ -1281,36 +1299,50 @@
         
         navLinks.forEach(link => {
             link.classList.remove('active');
-            const href = link.getAttribute('href');
-            if (href === `#${current}`) {
+            if (link.getAttribute('href') === `#${current}`) {
                 link.classList.add('active');
             }
         });
     });
     
-    // Mobile menu
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const navLinksMenu = document.getElementById('navLinks');
+    // Custom cursor
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
     
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', () => {
-            if (navLinksMenu.style.display === 'flex') {
-                navLinksMenu.style.display = 'none';
-            } else {
-                navLinksMenu.style.display = 'flex';
-                navLinksMenu.style.flexDirection = 'column';
-                navLinksMenu.style.position = 'absolute';
-                navLinksMenu.style.top = '80px';
-                navLinksMenu.style.left = '0';
-                navLinksMenu.style.width = '100%';
-                navLinksMenu.style.backgroundColor = 'var(--bg-primary)';
-                navLinksMenu.style.padding = '20px';
-                navLinksMenu.style.gap = '20px';
-                navLinksMenu.style.borderBottom = '1px solid var(--border-color)';
-                navLinksMenu.style.zIndex = '999';
-            }
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        
+        setTimeout(() => {
+            cursorFollower.style.left = e.clientX + 'px';
+            cursorFollower.style.top = e.clientY + 'px';
+        }, 50);
+    });
+    
+    document.addEventListener('mouseenter', () => {
+        cursor.style.opacity = '1';
+        cursorFollower.style.opacity = '1';
+    });
+    
+    document.addEventListener('mouseleave', () => {
+        cursor.style.opacity = '0';
+        cursorFollower.style.opacity = '0';
+    });
+    
+    // Hover effect for buttons and cards
+    const hoverElements = document.querySelectorAll('.btn-gold, .btn-outline-gold, .btn-dark, .apartment-card, .facility-item');
+    
+    hoverElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursor.style.transform = 'scale(2)';
+            cursorFollower.style.transform = 'scale(1.5)';
         });
-    }
+        
+        el.addEventListener('mouseleave', () => {
+            cursor.style.transform = 'scale(1)';
+            cursorFollower.style.transform = 'scale(1)';
+        });
+    });
 </script>
 </body>
 </html>
