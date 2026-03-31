@@ -4,20 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class Testimonial extends Model
 {
     protected $fillable = [
         'user_id',
         'room_id',
-        'check_in',
-        'check_out',
-        'total_price',
-        'status',
-        'payment_status',
-        'order_id',       // 🔥 INI WAJIB ADA
-        'payment_url'
-    ];
+        'booking_id',
+        'rating',
+        'comment',
 
+    ];
 
     public function user()
     {
@@ -27,5 +23,10 @@ class Booking extends Model
     public function room()
     {
         return $this->belongsTo(Room::class);
+    }
+
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class);
     }
 }
