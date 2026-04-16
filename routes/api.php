@@ -19,7 +19,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // 🔥 WEBHOOK (HARUS DI SINI - TANPA AUTH)
-Route::post('/xendit/callback', [BookingController::class, 'xenditCallback']);
+// Route::post('/xendit/callback', [BookingController::class, 'xenditCallback']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -30,7 +30,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
   // Booking with tokens
 
-  Route::post('/bookings', [BookingController::class, 'AddBooking']);
+  // Route::post('/bookings', [BookingController::class, 'AddBooking']);
+  Route::post('/booking', [BookingController::class, 'createBooking']);
+  Route::post('/booking/{id}/customer', [BookingController::class, 'fillCustomerData']);
+  Route::post('/booking/{id}/payment-method', [BookingController::class, 'choosePayment']);
+  Route::post('/booking/{id}/upload', [BookingController::class, 'uploadPayment']);
   Route::post('/testimonials', [TestimonialController::class, 'store']);
 
   // Booking with user
