@@ -15,7 +15,12 @@ class Booking extends Model
         'status',
         'payment_status',
         'order_id',       // 🔥 INI WAJIB ADA
-        'payment_url'
+        'payment_url',
+
+        'customer_name',
+        'customer_phone',
+        'payment_method',
+        'payment_proof'
     ];
 
 
