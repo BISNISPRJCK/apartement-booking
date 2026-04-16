@@ -142,6 +142,17 @@ Route::post('/register', function (Request $request) {
     // Proses Booking (POST)
     Route::post('/booking/store', [PageController::class, 'storeBooking'])->name('booking.store');
 
+// user client
     Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+        return view('user.dashboard');
+    });
+
+    Route::get('/user/profile', function () {
+        return view('user.profile.index');
+    });
+    Route::get('/user/packages', function () {
+        return view('user.packages.index');
+    });
+    Route::get('/user/riwayat', function () {
+        return view('user.riwayat.index');
+    });
