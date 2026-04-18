@@ -156,3 +156,44 @@ Route::post('/register', function (Request $request) {
     Route::get('/user/riwayat', function () {
         return view('user.riwayat.index');
     });
+// dashboard admin
+    Route::prefix('admin')->group(function () {
+
+        Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+        });
+
+        Route::get('/profile', function () {
+        return view('admin.profile.index');
+        });
+
+        Route::get('/booking', function () {
+        return view('admin.booking.index');
+        });
+
+        Route::get('/invoice', function () {
+        return view('admin.invoice.index');
+        });
+
+        Route::get('/users', function () {
+        return view('admin.users.index');
+        });
+
+        /* CMS */
+        Route::get('/cms/product', function () {
+        return view('admin.cms.product');
+        });
+
+        Route::get('/cms/contact', function () {
+        return view('admin.cms.contact');
+        });
+
+        Route::get('/cms/about', function () {
+        return view('admin.cms.about');
+        });
+
+});
+// dashboard super admin
+    Route::get('/superadmin/dashboard', function () {
+        return view('superadmin.dashboard');
+    });
