@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use Filament\Forms\Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\RichEditor;
 
 
 class RoomForm

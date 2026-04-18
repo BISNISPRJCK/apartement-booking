@@ -16,39 +16,40 @@
 <!-- Filter Section -->
 <section style="padding: 60px 60px 0;">
     <div class="container">
-        <form action="{{ route('property') }}" method="GET" class="filter-form">
+        <form id="filterForm" class="filter-form">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <input type="text" name="search" class="form-input" placeholder="Search residences..." value="{{ request('search') }}" style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
+                <input type="text" id="searchInput" class="form-input" placeholder="Search residences..." style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
                 
-                <select name="type" class="form-select" style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
+                <select id="typeSelect" class="form-select" style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
                     <option value="">All Types</option>
-                    @foreach($apartmentTypes as $type)
-                        <option value="{{ strtolower($type['name']) }}" {{ request('type') == strtolower($type['name']) ? 'selected' : '' }}>{{ $type['name'] }}</option>
-                    @endforeach
+                    <option value="premium">Premium</option>
+                    <option value="biasa">Biasa</option>
+                    <option value="studio">Studio</option>
                 </select>
                 
-                <select name="price_range" class="form-select" style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
-                    <option value="">All Prices</option>
-                    <option value="0-2000000" {{ request('price_range') == '0-2000000' ? 'selected' : '' }}>Under Rp 2M</option>
-                    <option value="2000000-4000000" {{ request('price_range') == '2000000-4000000' ? 'selected' : '' }}>Rp 2M - Rp 4M</option>
-                    <option value="4000000-6000000" {{ request('price_range') == '4000000-6000000' ? 'selected' : '' }}>Rp 4M - Rp 6M</option>
-                    <option value="6000000-999999999" {{ request('price_range') == '6000000-999999999' ? 'selected' : '' }}>Above Rp 6M</option>
-                </select>
-                
-                <select name="sort" class="form-select" style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
-                    <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
-                    <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
-                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
+                <select id="sortSelect" class="form-select" style="padding: 15px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; color: var(--text-primary);">
+                    <option value="latest">Latest</option>
+                    <option value="price_asc">Price: Low to High</option>
+                    <option value="price_desc">Price: High to Low</option>
                 </select>
                 
                 <button type="submit" class="btn-gold" style="padding: 15px;">APPLY FILTERS</button>
-                <a href="{{ route('property') }}" class="btn-outline-gold" style="display: flex; align-items: center; justify-content: center;">RESET</a>
+                <button type="button" id="resetFilter" class="btn-outline-gold" style="display: flex; align-items: center; justify-content: center; padding: 15px; cursor: pointer;">RESET</button>
             </div>
         </form>
     </div>
 </section>
 
 <!-- Properties Grid -->
+<section style="padding: 60px;">
+    <div class="container">
+        <div class="apartments-grid" id="propertiesGrid">
+            {{-- Diisi oleh JavaScript --}}
+        </div>
+    </div>
+</section>
+
+<!-- Properties Grid
 <section style="padding: 60px;">
     <div class="container">
         <div class="apartments-grid">
@@ -87,7 +88,7 @@
         </div>
         @endif
     </div>
-</section>
+</section> -->
 
 <!-- Modal Popup -->
 <div id="propertyModal" class="modal">
@@ -551,78 +552,229 @@
             overflow: hidden;
         }
     }
+
+
+        /* Badge Status */
+    .card-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;  /* Ganti dari left menjadi right */
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        white-space: nowrap;
+        z-index: 10;
+    }
+
+    .badge-available {
+        background: rgba(76, 175, 80, 0.9);
+        color: white;
+        border: none;
+    }
+
+    .badge-booked {
+        background: rgba(244, 67, 54, 0.9);
+        color: white;
+        border: none;
+    }
+
+    .badge-available i,
+    .badge-booked i {
+        font-size: 8px;
+    }
 </style>
 
 <script>
-    function openModal(property) {
-        // Set modal content
-        document.getElementById('modalImage').src = property.image;
-        document.getElementById('modalType').innerHTML = property.type || 'Luxury Suite';
-        document.getElementById('modalTitle').innerHTML = property.title;
-        document.getElementById('modalLocation').innerHTML = property.location || property.city || 'Jakarta, Indonesia';
-        document.getElementById('modalDescription').innerHTML = property.description || property.long_description || 'Experience unparalleled luxury in this exquisite residence. Every detail has been carefully crafted to provide the ultimate living experience.';
-        
-        const priceMin = property.price_min / 1000000;
-        const priceMax = property.price_max / 1000000;
-        document.getElementById('modalPrice').innerHTML = `Rp ${priceMin.toFixed(1)}M - ${priceMax.toFixed(1)}M <span style="font-size: 14px; color: var(--text-secondary);">/ annum</span>`;
-        
-        // Store property data for booking
-        window.currentProperty = property;
-        
-        // Show modal
+    // ============ CONFIG ============
+    const API_BASE = '/api';
+    const IMAGE_BASE = 'http://localhost:8000/storage/'; // sesuaikan dengan URL storage Laravel kamu
+
+    // ============ FETCH ROOMS FROM API ============
+    async function loadRooms(params = {}) {
+        const grid = document.getElementById('propertiesGrid');
+        grid.innerHTML = `
+            <div style="text-align: center; grid-column: 1/-1; padding: 60px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--gold-primary);"></i>
+                <p style="margin-top: 15px; color: var(--text-secondary);">Loading properties...</p>
+            </div>
+        `;
+
+        try {
+            const query = new URLSearchParams(params).toString();
+            const response = await fetch(`${API_BASE}/rooms?${query}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.success && data.data.length > 0) {
+                renderRooms(data.data);
+            } else {
+                grid.innerHTML = `
+                    <div style="text-align: center; grid-column: 1/-1; padding: 60px;">
+                        <i class="fas fa-building" style="font-size: 60px; color: var(--gold-primary); margin-bottom: 20px; display: inline-block;"></i>
+                        <h3>No Residences Found</h3>
+                        <p>Please try different search criteria</p>
+                        <a href="{{ route('property') }}" class="btn-gold" style="margin-top: 20px; display: inline-block;">VIEW ALL</a>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+            grid.innerHTML = `
+                <div style="text-align: center; grid-column: 1/-1; padding: 60px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 60px; color: #f44336; margin-bottom: 20px; display: inline-block;"></i>
+                    <h3>Failed to Load Properties</h3>
+                    <p style="color: var(--text-secondary);">Could not connect to server. Please try again.</p>
+                    <button onclick="loadRooms()" class="btn-gold" style="margin-top: 20px;">RETRY</button>
+                </div>
+            `;
+        }
+    }
+
+    function renderRooms(rooms) {
+        const grid = document.getElementById('propertiesGrid');
+
+        grid.innerHTML = rooms.map(room => `
+            <div class="apartment-card" data-aos="fade-up">
+                <div class="card-image">
+                    <img 
+                        src="${IMAGE_BASE}${room.image}" 
+                        alt="${room.room_number}"
+                        onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800'"
+                    >
+                    ${room.status === 'available' 
+                        ? '<div class="card-badge badge-available"><i class="fas fa-circle"></i> Available</div>' 
+                        : '<div class="card-badge badge-booked"><i class="fas fa-circle"></i> Booked</div>'
+                    }
+                </div>
+                <div class="card-content">
+                    <h3>Room ${room.room_number}</h3>
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; text-transform: capitalize;">
+                        ${room.category?.name || ''} · ${room.type}
+                    </div>
+                    <div class="price">Rp ${formatPrice(room.price)} <span>/ night</span></div>
+                    <div class="features">
+                        <span><i class="fas fa-tag"></i> ${room.type}</span>
+                        <span><i class="fas fa-layer-group"></i> ${room.category?.name || 'Standard'}</span>
+                    </div>
+                    <button 
+                        onclick='openModal(${JSON.stringify(room)})' 
+                        class="btn-gold" 
+                        style="width: 100%; text-align: center; cursor: pointer; ${room.status !== 'available' ? 'opacity: 0.5; pointer-events: none;' : ''}"
+                        ${room.status !== 'available' ? 'disabled' : ''}
+                    >
+                        VIEW DETAILS
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        // Re-init AOS jika tersedia
+        if (typeof AOS !== 'undefined') AOS.refresh();
+    }
+
+    function formatPrice(price) {
+        if (price >= 1000000) {
+            return (price / 1000000).toFixed(1) + 'M';
+        } else if (price >= 1000) {
+            return (price / 1000).toFixed(0) + 'K';
+        }
+        return price.toLocaleString('id-ID');
+    }
+
+    // ============ FILTER ============
+    document.getElementById('filterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const params = {};
+        const search = document.getElementById('searchInput').value.trim();
+        const type = document.getElementById('typeSelect').value;
+        const sort = document.getElementById('sortSelect').value;
+
+        if (search) params.search = search;
+        if (type) params.type = type;
+        if (sort) params.sort = sort;
+
+        loadRooms(params);
+    });
+
+    document.getElementById('resetFilter').addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('typeSelect').value = '';
+        document.getElementById('sortSelect').value = 'latest';
+        loadRooms();
+    });
+
+    // ============ MODAL ============
+    function openModal(room) {
+        document.getElementById('modalImage').src = IMAGE_BASE + room.image;
+        document.getElementById('modalImage').onerror = function() {
+            this.src = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800';
+        };
+        document.getElementById('modalType').innerHTML = room.category?.name || 'Luxury Suite';
+        document.getElementById('modalTitle').innerHTML = `Room ${room.room_number}`;
+        document.getElementById('modalLocation').innerHTML = 'Vantix Stay, Jakarta';
+        document.getElementById('modalDescription').innerHTML = room.description || '-';
+        document.getElementById('modalPrice').innerHTML = `Rp ${Number(room.price).toLocaleString('id-ID')} <span style="font-size: 14px; color: var(--text-secondary);">/ night</span>`;
+
+        window.currentProperty = room;
+
         document.getElementById('propertyModal').classList.add('show');
         document.body.style.overflow = 'hidden';
-        
-        // Untuk desktop, tambahkan class khusus
         if (window.innerWidth >= 901) {
             document.body.classList.add('modal-open-desktop');
         }
     }
-    
+
     function closeModal() {
         document.getElementById('propertyModal').classList.remove('show');
         document.body.style.overflow = '';
         document.body.classList.remove('modal-open-desktop');
     }
-    
+
     function bookNow() {
         const checkIn = document.getElementById('checkIn').value;
         const checkOut = document.getElementById('checkOut').value;
         const guest = document.getElementById('guestCount').value;
-        
-        // Close modal first
+
+        if (!checkIn || !checkOut) {
+            alert('Please select check-in and check-out dates.');
+            return;
+        }
+
         closeModal();
-        
-        // Redirect to login page with booking data in session/sessionStorage
+
         const bookingData = {
             property: window.currentProperty,
-            checkIn: checkIn,
-            checkOut: checkOut,
-            guest: guest
+            checkIn,
+            checkOut,
+            guest
         };
-        
-        // Store booking data in sessionStorage
+
         sessionStorage.setItem('pendingBooking', JSON.stringify(bookingData));
-        
-        // Redirect to login page
         window.location.href = "{{ route('login') }}";
     }
-    
-    // Close modal when clicking outside
+
+    // Close modal on outside click
     document.getElementById('propertyModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
+        if (e.target === this) closeModal();
     });
-    
-    // Close modal with Escape key
+
+    // Close modal on Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && document.getElementById('propertyModal').classList.contains('show')) {
             closeModal();
         }
     });
-    
-    // Handle resize untuk menyesuaikan scroll behavior
+
     window.addEventListener('resize', function() {
         if (document.getElementById('propertyModal').classList.contains('show')) {
             if (window.innerWidth >= 901) {
@@ -631,6 +783,11 @@
                 document.body.classList.remove('modal-open-desktop');
             }
         }
+    });
+
+    // ============ INIT ============
+    document.addEventListener('DOMContentLoaded', function() {
+        loadRooms();
     });
 </script>
 @endsection
