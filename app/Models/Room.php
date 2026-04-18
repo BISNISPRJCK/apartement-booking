@@ -13,7 +13,8 @@ class Room extends Model
         'price',
         'status',
         'description',
-        'image'
+        'image',
+        'capacity'
     ];
 
     public function category()
@@ -24,5 +25,15 @@ class Room extends Model
     public function bookins()
     {
         return $this->hasMany(Booking::class);
+    }
+
+    public function features()
+    {
+        return $this->belongsToMany(
+            \App\Models\RoomFeature::class,
+            'room_feature_room', // 🔥 NAMA TABEL PIVOT
+            'room_id',
+            'room_feature_id'
+        );
     }
 }
