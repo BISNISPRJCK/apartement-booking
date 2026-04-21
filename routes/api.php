@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AboutController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\Api\RoomCategoryController;
@@ -18,8 +19,9 @@ Route::get('/room-categories', [RoomCategoryController::class, 'index']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// 🔥 WEBHOOK (HARUS DI SINI - TANPA AUTH)
-// Route::post('/xendit/callback', [BookingController::class, 'xenditCallback']);
+// CMS 
+// 1. aboute 
+Route::get('/about', [AboutController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -45,6 +47,20 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/bookings', [BookingController::class, 'getAllBookings']);
   Route::get('/bookings/{id}/approve', [BookingController::class, 'approveBooking']);
   Route::get('/bookings/{id}/cancel', [BookingController::class, 'cancelBooking']);
+
+
+  // CMS 
+  // 1. about
+  Route::post('/about', [AboutController::class, 'storeAbout']);
+  Route::delete('/about', [AboutController::class, 'deleteAbout']);
+  // 2. Core Values
+  Route::post('/core-values', [AboutController::class, 'storeCore']);
+  Route::put('/core-values/{id}', [AboutController::class, 'updateCore']);
+  Route::delete('/core-values/{id}', [AboutController::class, 'deleteCore']);
+  // 3. Statistics
+  Route::post('/statistics', [AboutController::class, 'storeStat']);
+  Route::put('/statistics/{id}', [AboutController::class, 'updateStat']);
+  Route::delete('/statistics/{id}', [AboutController::class, 'deleteStat']);
 });
 
 // Booking
