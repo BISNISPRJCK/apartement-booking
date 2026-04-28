@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\RoomCategoryController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\TestimonialController;
 
 Route::get('/rooms', [RoomController::class, 'index']);
@@ -22,6 +23,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // CMS 
 // 1. aboute 
 Route::get('/about', [AboutController::class, 'index']);
+Route::get('/teams', [TeamController::class, 'index']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -61,6 +63,11 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/statistics', [AboutController::class, 'storeStat']);
   Route::put('/statistics/{id}', [AboutController::class, 'updateStat']);
   Route::delete('/statistics/{id}', [AboutController::class, 'deleteStat']);
+  // 4. Teams
+
+  Route::post('/teams', [TeamController::class, 'store']);
+  Route::post('/teams/{id}', [TeamController::class, 'update']); // pakai POST biar gampang upload
+  Route::delete('/teams/{id}', [TeamController::class, 'destroy']);
 });
 
 // Booking
